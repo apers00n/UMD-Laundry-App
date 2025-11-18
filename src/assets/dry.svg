@@ -1,0 +1,13 @@
+<svg width="105" height="87" viewBox="0 0 105 87" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="1" y="1" width="66" height="17" stroke="#909090" stroke-width="2"/>
+<rect x="8.5" y="6.5" width="6" height="6" fill="#909090" stroke="#909090"/>
+<rect x="0.5" y="-0.5" width="3" height="2" transform="matrix(1 0 0 -1 37 12)" fill="#909090" stroke="#909090"/>
+<rect x="0.5" y="-0.5" width="3" height="2" transform="matrix(1 0 0 -1 45 12)" fill="#909090" stroke="#909090"/>
+<rect x="0.5" y="-0.5" width="3" height="2" transform="matrix(1 0 0 -1 53 12)" fill="#909090" stroke="#909090"/>
+<rect x="0.5" y="-0.5" width="2" height="2" transform="matrix(1 0 0 -1 61 12)" fill="#909090" stroke="#909090"/>
+<path d="M51 55.835L49 58.208V35H17V64H48.0635L49.918 66H15V33H51V55.835Z" fill="#909090"/>
+<path d="M49 84L59 71.3824L50 61.6765L59 51" stroke="#909090" stroke-width="1.5"/>
+<path d="M55 84L64 71.3824L55.9 61.6765L64 51" stroke="#909090" stroke-width="1.5"/>
+<path d="M61 84L70 71.3824L61.9 61.6765L70 51" stroke="#909090" stroke-width="1.5"/>
+<path d="M68 50.3262L66 52.9629V21H2V76H51.5107L49.9268 78H0V19H68V50.3262ZM68 78H67.7363L68 77.6299V78ZM62.8232 78H61.1211L62.5479 76H64.249L62.8232 78ZM67.4746 71.4775L66 73.5449V69.71L67.4746 71.4775ZM68 65.8633L66 63.4668V59.5801L68 56.9443V65.8633Z" fill="#909090"/>
+</svg>

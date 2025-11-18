@@ -1,0 +1,24 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}", // adjust if your renderer code is elsewhere
+  ],
+  theme: {
+    extend: {
+      keyframes: {
+        rotateSquare: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+      },
+      animation: {
+        rotateSquare: "rotateSquare 2s linear infinite",
+      },
+      fontFamily: {
+        jersey: ['"Jersey 10"', "sans-serif"],
+      },
+    },
+  },
+  plugins: [],
+};
