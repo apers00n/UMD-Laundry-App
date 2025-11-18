@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import "@fontsource/jersey-10";
 import "./index.css";
 import RotatingSquare from "./rotating";
