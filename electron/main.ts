@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+app.disableHardwareAcceleration();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
