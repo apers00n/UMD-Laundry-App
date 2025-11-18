@@ -14,9 +14,11 @@ export async function getRooms(label = "") {
 
   label = label.toLowerCase();
 
-  return data.rooms
-    .filter((room: Room) => room.label.toLowerCase().includes(label))
-    .map((room: Room) => ({ label: room.label, roomId: room.roomId }));
+  return sortRoomsByLabel(
+    data.rooms
+      .filter((room: Room) => room.label.toLowerCase().includes(label))
+      .map((room: Room) => ({ label: room.label, roomId: room.roomId })),
+  );
 }
 
 export async function getMachines(roomId: string) {
@@ -54,4 +56,12 @@ export async function getRoomSummaries(rooms: Room[]) {
   );
 
   return results;
+}
+
+/**
+ * Sort a list of rooms by ascending label
+ * @param {Array} rooms - Array of room objects with a 'label' property
+ */
+export function sortRoomsByLabel(rooms: Room[]) {
+  return rooms.slice().sort((a, b) => a.label.localeCompare(b.label));
 }
