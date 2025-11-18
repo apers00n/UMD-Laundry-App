@@ -16,6 +16,11 @@ declare global {
   }
 }
 
+type Room = {
+  label: string;
+  roomId: string;
+};
+
 interface Machine {
   opaqueId: string;
   type: "washer" | "dryer";
@@ -26,15 +31,17 @@ interface Machine {
 
 export default function App() {
   const [machines, setMachines] = useState<Machine[]>([]);
-  const [selectedRoom, setSelectedRoom] = useState<any | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
   useEffect(() => {
     if (!selectedRoom) return;
 
     async function fetchMachines() {
       try {
-        const machineData = await getMachines(selectedRoom.roomId);
-        setMachines(machineData);
+        if (selectedRoom) {
+          const machineData = await getMachines(selectedRoom.roomId);
+          setMachines(machineData);
+        }
       } catch (err) {
         console.error("Error fetching machines:", err);
       }
@@ -86,10 +93,7 @@ export default function App() {
         <p className="text-xl font-jersey text-[#393939]">
           {dryers.length} Dry
         </p>
-        <RoomSelector
-          selectedRoom={selectedRoom}
-          onSelectRoom={setSelectedRoom}
-        />
+        <RoomSelector onSelectRoom={setSelectedRoom} />
       </div>
 
       {/* Machines */}

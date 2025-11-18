@@ -1,6 +1,9 @@
 const UMD_LOCATION_ID = "fc5cd0de-25c6-4d33-afc4-c420156e9a3e";
 const BASE_URL = "https://mycscgo.com/api/v3/location/" + UMD_LOCATION_ID;
-
+type Room = {
+  label: string;
+  roomId: string;
+};
 /**
  * Fetch all rooms and return only those with optional label
  */
@@ -9,12 +12,14 @@ export async function getRooms(label = "") {
   if (!res.ok) throw new Error(`Error fetching location: ${res.status}`);
   const data = await res.json();
 
+  label = label.toLowerCase();
+
   return data.rooms
-    .filter((room) => room.label.includes(label))
-    .map((room) => ({ label: room.label, roomId: room.roomId }));
+    .filter((room: Room) => room.label.toLowerCase().includes(label))
+    .map((room: Room) => ({ label: room.label, roomId: room.roomId }));
 }
 
-export async function getMachines(roomId) {
+export async function getMachines(roomId: string) {
   const res = await fetch(`${BASE_URL}/room/${roomId}/machines`);
   if (!res.ok) throw new Error(`Error fetching location: ${res.status}`);
   const data = await res.json();
@@ -26,7 +31,7 @@ export async function getMachines(roomId) {
  * Fetch summaries for each room and return structured data
  * @param {Array} rooms - Array of objects with {label, roomId}
  */
-export async function getRoomSummaries(rooms) {
+export async function getRoomSummaries(rooms: Room[]) {
   const results = await Promise.all(
     rooms.map(async (room) => {
       const summaryRes = await fetch(`${BASE_URL}/room/${room.roomId}/summary`);
@@ -49,48 +54,4 @@ export async function getRoomSummaries(rooms) {
   );
 
   return results;
-}
-
-/**
- * Sort a list of rooms by ascending label
- * @param {Array} rooms - Array of room objects with a 'label' property
- */
-export function sortRoomsByLabel(rooms) {
-  return rooms.slice().sort((a, b) => a.label.localeCompare(b.label));
-}
-
-/**
- * Sort rooms by washers:
- * 1. Available washers (descending)
- * 2. Total washers (descending)
- * 3. Label (ascending)
- */
-export function sortRoomsByWashers(rooms) {
-  return rooms.slice().sort((a, b) => {
-    if (b.washers.available !== a.washers.available) {
-      return b.washers.available - a.washers.available; // most available first
-    }
-    if (b.washers.total !== a.washers.total) {
-      return b.washers.total - a.washers.total; // then most total first
-    }
-    return a.label.localeCompare(b.label); // then alphabetical
-  });
-}
-
-/**
- * Sort rooms by dryers:
- * 1. Available dryers (descending)
- * 2. Total dryers (descending)
- * 3. Label (ascending)
- */
-export function sortRoomsByDryers(rooms) {
-  return rooms.slice().sort((a, b) => {
-    if (b.dryers.available !== a.dryers.available) {
-      return b.dryers.available - a.dryers.available; // most available first
-    }
-    if (b.dryers.total !== a.dryers.total) {
-      return b.dryers.total - a.dryers.total; // then most total first
-    }
-    return a.label.localeCompare(b.label); // then alphabetical
-  });
 }

@@ -2,18 +2,31 @@ import { useState, useEffect } from "react";
 import { getRooms } from "./getInfo";
 
 interface RoomSelectorProps {
-  selectedRoom: any | null;
-  onSelectRoom: (room: any) => void;
+  onSelectRoom: (room: Room) => void;
 }
 
-export default function RoomSelector({
-  selectedRoom,
-  onSelectRoom,
-}: RoomSelectorProps) {
+type Room = {
+  label: string;
+  roomId: string;
+};
+
+export default function RoomSelector({ onSelectRoom }: RoomSelectorProps) {
   const [query, setQuery] = useState("");
-  const [rooms, setRooms] = useState<any[]>([]);
-  const [filtered, setFiltered] = useState<any[]>([]);
+  const [filtered, setFiltered] = useState<Room[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("lastSelectedRoom");
+    if (saved) {
+      try {
+        const room = JSON.parse(saved);
+        onSelectRoom(room);
+      } catch (err) {
+        console.warn("Failed to parse saved room:", err);
+        localStorage.removeItem("lastSelectedRoom"); // optional: clear bad data
+      }
+    }
+  }, [onSelectRoom]);
 
   useEffect(() => {
     if (!query) {
@@ -24,27 +37,39 @@ export default function RoomSelector({
     setLoading(true);
     getRooms(query)
       .then((res) => {
-        setRooms(res);
         setFiltered(res);
       })
       .finally(() => setLoading(false));
   }, [query]);
 
-  const handleSelect = (room: any) => {
+  const handleSelect = (room: Room) => {
     onSelectRoom(room);
     setQuery("");
     setFiltered([]);
+
+    localStorage.setItem("lastSelectedRoom", JSON.stringify(room));
   };
 
   return (
-    <div className="w-80 bg-white relative">
-      <input
-        type="text"
-        className="border p-2 rounded w-full"
-        placeholder="Search for a room..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
+    <div className="w-80 relative">
+      <div className="flex-row flex items-center gap-2  bg-white border p-2 rounded w-full">
+        <input
+          type="text"
+          className="w-full"
+          placeholder="Search for a room..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+
+        {query && (
+          <button
+            onClick={() => setQuery("")}
+            className="px-2 rounded-full bg-[#EB5854] flex items-center justify-center"
+          >
+            <span className="text-white text-sm">X</span>
+          </button>
+        )}
+      </div>
       {loading && (
         <div className="absolute bg-white border p-2 w-full">Loading...</div>
       )}
