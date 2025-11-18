@@ -1,14 +1,20 @@
 import { useState, useEffect } from "react";
-import { getRooms } from "./getInfo"; // adjust path
+import { getRooms } from "./getInfo";
 
-export default function RoomSelector() {
-  const [query, setQuery] = useState(""); // what user types
-  const [rooms, setRooms] = useState<any[]>([]); // all results from API
-  const [filtered, setFiltered] = useState<any[]>([]); // filtered results
-  const [selected, setSelected] = useState<any>(null); // selected room
+interface RoomSelectorProps {
+  selectedRoom: any | null;
+  onSelectRoom: (room: any) => void;
+}
+
+export default function RoomSelector({
+  selectedRoom,
+  onSelectRoom,
+}: RoomSelectorProps) {
+  const [query, setQuery] = useState("");
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [filtered, setFiltered] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // search rooms when query changes
   useEffect(() => {
     if (!query) {
       setFiltered([]);
@@ -25,13 +31,13 @@ export default function RoomSelector() {
   }, [query]);
 
   const handleSelect = (room: any) => {
-    setSelected(room);
-    setQuery(""); // clear search box if you like
+    onSelectRoom(room);
+    setQuery("");
     setFiltered([]);
   };
 
   return (
-    <div className="w-80 relative">
+    <div className="w-80 bg-white relative">
       <input
         type="text"
         className="border p-2 rounded w-full"
@@ -50,16 +56,10 @@ export default function RoomSelector() {
               className="p-2 hover:bg-gray-200 cursor-pointer"
               onClick={() => handleSelect(room)}
             >
-              {room.label} {/* or room.name if available */}
+              {room.label}
             </li>
           ))}
         </ul>
-      )}
-
-      {selected && (
-        <div className="mt-2 p-2 bg-gray-100 rounded">
-          Selected Room: {selected.roomId}
-        </div>
       )}
     </div>
   );

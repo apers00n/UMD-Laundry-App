@@ -3,7 +3,7 @@ import "./App.css";
 import "@fontsource/jersey-10";
 import "./index.css";
 import RotatingSquare from "./rotating";
-import { getRooms, getMachines } from "./getInfo.tsx";
+import { getMachines } from "./getInfo.tsx";
 import RoomSelector from "./roomSelector.tsx";
 
 declare global {
@@ -22,20 +22,18 @@ interface Machine {
   mode: string;
   timeRemaining: number;
   available: boolean;
-  // add other props if needed
 }
 
 export default function App() {
   const [machines, setMachines] = useState<Machine[]>([]);
+  const [selectedRoom, setSelectedRoom] = useState<any | null>(null);
 
   useEffect(() => {
+    if (!selectedRoom) return;
+
     async function fetchMachines() {
       try {
-        const rooms = await getRooms("Prince Frederick FL7");
-        if (rooms.length === 0) return;
-
-        const machineData = await getMachines(rooms[0].roomId);
-        console.log(machineData);
+        const machineData = await getMachines(selectedRoom.roomId);
         setMachines(machineData);
       } catch (err) {
         console.error("Error fetching machines:", err);
@@ -43,19 +41,15 @@ export default function App() {
     }
 
     fetchMachines();
-    // Update every minute (60000ms)
-    const interval = setInterval(fetchMachines, 60000);
-
-    // Clean up interval on unmount
+    const interval = setInterval(fetchMachines, 60000); // update every minute
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedRoom]);
 
-  // Separate washers and dryers
   const washers = machines.filter((m) => m.type === "washer");
   const dryers = machines.filter((m) => m.type === "dryer");
 
   return (
-    <div className=" overflow-hidden scrollbar-none border-b-3 border-r-3 h-screen rounded-lg">
+    <div className="overflow-hidden scrollbar-none border-b-3 border-r-3 h-screen rounded-lg">
       <div className="bg-[#A5D1F9] flex border-t-0 border-4 p-4 border-black w-full flex-row justify-between">
         <p className="text-5xl font-jersey text-white text-start">LAUNDRY</p>
         <div className="gap-2 flex flex-row">
@@ -80,12 +74,11 @@ export default function App() {
         </div>
       </div>
 
-      <RoomSelector />
-
-      <div className="bg-[#F0E7DF] flex border-double border-3 p-2 border-[#918F8F] w-full flex-row justify-start gap-10 px-4">
+      {/* Info bar */}
+      <div className="bg-[#F0E7DF] items-center flex border-double border-3 p-2 border-[#918F8F] w-full flex-row justify-start gap-10 px-4">
         <p className="text-xl font-jersey text-[#393939]">UMD</p>
         <p className="text-xl font-jersey text-[#393939]">
-          PRINCE FREDERICK FL7
+          {selectedRoom ? selectedRoom.label : "Select a room"}
         </p>
         <p className="text-xl font-jersey text-[#393939]">
           {washers.length} Wash
@@ -93,10 +86,14 @@ export default function App() {
         <p className="text-xl font-jersey text-[#393939]">
           {dryers.length} Dry
         </p>
+        <RoomSelector
+          selectedRoom={selectedRoom}
+          onSelectRoom={setSelectedRoom}
+        />
       </div>
 
+      {/* Machines */}
       <div className="flex flex-col items-baseline p-20 gap-10">
-        {/* Washers Row */}
         <div className="flex flex-row items-end justify-evenly w-full">
           {washers.map((machine) => (
             <RotatingSquare
@@ -108,8 +105,6 @@ export default function App() {
             />
           ))}
         </div>
-
-        {/* Dryers Row */}
         <div className="flex flex-row items-end justify-evenly w-full">
           {dryers.map((machine) => (
             <RotatingSquare
