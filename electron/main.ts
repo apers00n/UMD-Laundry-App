@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -30,7 +30,7 @@ let win: BrowserWindow | null;
 
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    icon: path.join(__dirname, "../public/icon.png"),
     frame: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
@@ -49,6 +49,21 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
 }
+
+ipcMain.on("window-close", () => {
+  if (win) app.quit();
+});
+
+ipcMain.on("window-minimize", () => {
+  if (win) win.minimize();
+});
+
+ipcMain.on("window-toggle-maximize", () => {
+  if (win) {
+    if (win.isMaximized()) win.unmaximize();
+    else win.maximize();
+  }
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

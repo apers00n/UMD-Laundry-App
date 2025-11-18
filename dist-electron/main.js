@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { ipcMain, app, BrowserWindow } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -12,7 +12,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let win;
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    icon: path.join(__dirname$1, "../public/icon.png"),
     frame: false,
     webPreferences: {
       preload: path.join(__dirname$1, "preload.mjs")
@@ -27,6 +27,18 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
 }
+ipcMain.on("window-close", () => {
+  if (win) app.quit();
+});
+ipcMain.on("window-minimize", () => {
+  if (win) win.minimize();
+});
+ipcMain.on("window-toggle-maximize", () => {
+  if (win) {
+    if (win.isMaximized()) win.unmaximize();
+    else win.maximize();
+  }
+});
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();

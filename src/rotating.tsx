@@ -42,9 +42,10 @@ export default function RotatingSquare({
         // Reset to 0 so next rock works correctly
         // controls.set({ rotate: 0 });
       }
+      controls.set({ rotate: 0 });
     }
     sequence();
-  }, [controls]);
+  }, [controls, text]);
 
   return (
     <div className={text ? "opacity-70" : ""}>
